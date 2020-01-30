@@ -10,9 +10,7 @@ if (!params.has('nombre') || !params.has('sala')) {
 var usuario = {
     nombre: params.get('nombre'),
     sala: params.get('sala')
-}
-
-
+};
 
 
 
@@ -20,8 +18,11 @@ socket.on('connect', function() {
     console.log('Conectado al servidor');
 
     socket.emit('entrarChat', usuario, function(resp) {
-        console.log('Usuarios conectados', resp);
+
+        //usamos la funcion renderizarUsuarios() que esta en el archivo "socket-chat-jquery.js" y necesita un arreglo de personas
+        renderizarUsuarios(resp);
     });
+
 });
 
 // escuchar
@@ -34,7 +35,7 @@ socket.on('disconnect', function() {
 
 // Enviar información
 // socket.emit('crearMensaje', {
-//     usuario: 'Fernando',
+//     nombre: 'Fernando',
 //     mensaje: 'Hola Mundo'
 // }, function(resp) {
 //     console.log('respuesta server: ', resp);
@@ -42,15 +43,23 @@ socket.on('disconnect', function() {
 
 // Escuchar información
 socket.on('crearMensaje', function(mensaje) {
-    console.log('Servidor:', mensaje);
-});
-//escuchar cambios de usuarios
-//cuando un usuario entra o sale del chat
-socket.on('listaPersonas', function(personas) {
-    console.log('Servidor:', personas);
+    //console.log('Servidor:', mensaje);
+    renderizarMensaje(mensaje, false);
+
+    scrollBottom()
 });
 
-//mensajes privados
+// Escuchar cambios de usuarios
+// cuando un usuario entra o sale del chat
+socket.on('listaPersonas', function(personas) {
+
+    renderizarUsuarios(personas);
+
+});
+
+// Mensajes privados
 socket.on('mensajePrivado', function(mensaje) {
-    console.log('Mensaje Privado', mensaje);
-})
+
+    console.log('Mensaje Privado:', mensaje);
+
+});
